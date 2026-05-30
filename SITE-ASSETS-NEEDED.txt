@@ -1,0 +1,425 @@
+================================================================================
+STARTUPFORGE (hermes-agent) — SITE ELEMENTS & IMAGES ASSET CHECKLIST
+================================================================================
+
+Generated for asset sourcing. Provide the files listed below; no code changes
+are included in this document. Hand this file to a designer or use it as your
+delivery checklist when preparing images.
+
+================================================================================
+1. APP OVERVIEW
+================================================================================
+
+Product (UI name):     StartupForge
+Repo/README name:      Agent Autopilot  <-- naming split; confirm before logo work
+Tagline:               "Describe your idea. The agent does the rest."
+Secondary tagline:     "Describe your idea. Review each step before proceeding."
+Loading copy:          "StartupForge is thinking"
+
+What the app does:
+  - User describes a product idea in plain text
+  - AI agent runs 4 steps: Competitor Research, Landing Page, Launch Posts,
+    AI Agent Prompts
+  - User reviews each step before proceeding
+  - Outputs: markdown research, HTML landing page, social post drafts, agent prompts
+
+Tech stack:            Next.js 14, React, Tailwind CSS, Clerk auth, Supabase
+Theme:                 Forced dark mode (html.dark)
+Current asset state:   ZERO image files in repo; no public/ folder; no favicon/OG
+
+================================================================================
+2. BRAND & DESIGN REFERENCE (for asset creators)
+================================================================================
+
+COLOR PALETTE
+-------------
+Token          Hex         Usage
+-----          ---         -----
+Background     #0a0a0a     Page background
+Surface        #111111     Cards, inputs, panels
+Border         #262626     Borders, dividers
+Text           #fafafa     Primary text, headings
+Muted          #71717a     Secondary text, placeholders
+Body prose     #d4d4d8     Markdown content
+Sky accent     #38bdf8     Links, running state, queue UI
+Emerald        #34d399     Success, completed steps (emerald-400 in UI)
+Amber          #fbbf24     Warning prompts (keep tab open)
+Red            #f87171     Errors
+White/Black    #fafafa/#000 Primary buttons (white bg, black text)
+HN orange      #ff6600     Hacker News card header (mock only)
+Reddit dark    #1a1a1b     Reddit card background (mock only)
+
+DESIGN STYLE
+------------
+  - Dark matte, minimal, modern
+  - Rounded corners (rounded-xl / 0.75rem typical)
+  - No heavy gradients on main UI (subtle accents on queue card only)
+  - Light text on dark backgrounds
+  - Primary CTAs: white button on black background
+
+FORMAT PREFERENCES
+------------------
+  - Logos and icons: SVG preferred (scalable, crisp on retina)
+  - Social/OG images: PNG or JPG
+  - Favicon: .ico multi-size (16, 32, 48) plus PNG fallbacks
+  - Use transparent backgrounds where logo sits on #0a0a0a or #111111
+  - Design for dark UI: light-on-dark treatment; avoid dark logos on dark bg
+
+BRANDING DECISION NEEDED
+------------------------
+  UI displays "StartupForge" everywhere (navbar, hero, metadata, loader).
+  README and Docker use "Agent Autopilot".
+  Decide which name appears in logo/wordmark before final artwork.
+
+================================================================================
+3. PRIORITY 1 — MUST PROVIDE (branding & SEO)
+================================================================================
+
+These are the highest-impact assets missing today.
+
+Asset                    Suggested specs                    Future use
+-----                    -----------------                  ----------
+Logo (primary)           SVG preferred; PNG fallback        Navbar brand link
+                         512x512 transparent bg             Dashboard hero H1 area
+                                                            Sign-in / sign-up pages
+
+Logo (compact/icon)      SVG or PNG 32x32 to 64x64          Favicon source
+                         Square or circular mark             Mobile navbar icon
+
+Favicon                  favicon.ico (16/32/48px)           Browser tab
+                         icon.png 32x32 or 512x512
+
+Apple touch icon         PNG 180x180                        iOS home screen bookmark
+
+Open Graph image         PNG or JPG 1200x630                Social link previews
+                         (Facebook, LinkedIn, Slack, etc.)  (layout metadata)
+
+Twitter/X card image     PNG or JPG 1200x600                X/Twitter link previews
+                         summary_large_image format
+
+SUGGESTED FILENAMES TO DELIVER
+------------------------------
+  logo.svg
+  logo-icon.svg          (icon mark only, no wordmark)
+  favicon.ico
+  icon-512.png           (or icon-32.png + icon-512.png)
+  apple-touch-icon.png
+  og-image.png
+
+CURRENT STATE: All of the above are MISSING. Navbar and hero use plain text
+"StartupForge" only. layout.tsx has title + description but no icons or OG tags.
+
+================================================================================
+4. PRIORITY 2 — RECOMMENDED POLISH
+================================================================================
+
+Asset                    Suggested specs                    Purpose
+-----                    -----------------                  -------
+Empty state illustration SVG or PNG ~400x300               History page when user
+                         Dark-bg friendly                   has no runs yet
+                         Muted colors, optional sky accent  (RunHistoryList.tsx)
+
+Loading mascot/spinner   SVG or animated GIF/WebP           Agent "thinking" state
+                         40x40 to 80x80                     (ThinkingLoader.tsx)
+                         Replaces CSS ring animation
+
+Queue illustration       Optional SVG ~80x80                Waiting line UI
+                         Sky/emerald accent tones           (WaitingList.tsx)
+                         Replaces animated CSS rings
+
+Hero background          Optional subtle pattern or         Dashboard idle hero
+                         gradient image 1920x1080           before user starts a run
+                         Very subtle; must not compete      (app/page.tsx)
+                         with text readability
+
+SUGGESTED FILENAMES
+-------------------
+  empty-state.svg
+  loading-spinner.svg    (or loading-mascot.svg)
+  queue-icon.svg         (optional)
+  hero-bg.png            (optional, 1920x1080)
+
+================================================================================
+5. PRIORITY 3 — OPTIONAL PLATFORM / SOCIAL MOCK ASSETS
+================================================================================
+
+Used in launch post preview cards (PostCards.tsx). NOT required — app currently
+uses Unicode characters, letters, and inline SVG. Provide only if you want
+polished social mockups.
+
+Asset                      Size              Replaces current placeholder
+-----                      ----              ----------------------------
+X/Twitter logo             32x32 SVG         Unicode "X" in white circle
+Twitter verified badge     16x16 SVG         Inline SVG already in code
+Product avatar placeholder 40x40 PNG/SVG      Gray gradient circle in tweets
+                           circle
+Hacker News logo           28x28 SVG         Letter "Y" on orange bar
+Reddit upvote icon         16x16 SVG         Unicode triangle up
+Reddit downvote icon       16x16 SVG         Unicode triangle down
+Reddit comment icon        16x16 SVG         Emoji comment icon
+Reddit share icon          16x16 SVG         Text "Share"
+Reddit award icon          16x16 SVG         Trophy emoji
+
+Mock copy defaults in cards (text, not images):
+  Display name:  "Your Product"
+  Handle:        "@yourproduct"
+  HN title:      "Show HN: Your Product"
+  Subreddit:     "r/startups"
+
+Optional: provide a branded product avatar if you want tweet previews to look
+like your real product rather than a gray circle.
+
+SUGGESTED FILENAMES
+-------------------
+  twitter-logo.svg
+  twitter-verified.svg     (only if replacing built-in SVG)
+  product-avatar.png       (40x40)
+  hn-logo.svg
+  reddit-upvote.svg
+  reddit-downvote.svg
+  reddit-comment.svg
+  reddit-share.svg
+  reddit-award.svg
+
+================================================================================
+6. PAGE-BY-PAGE UI ELEMENT INVENTORY
+================================================================================
+
+Everything below describes what exists on each screen. Items marked [ASSET]
+are places where your images would eventually plug in. Items marked [BUILT-IN]
+work today without image files.
+
+--------------------------------------------------------------------------------
+/  DASHBOARD  (app/page.tsx)
+--------------------------------------------------------------------------------
+
+NAVBAR (components/Navbar.tsx)
+  [ASSET]     Brand logo / wordmark (replaces text "StartupForge")
+  [BUILT-IN]  "History" text link
+  [BUILT-IN]  Clerk UserButton avatar (32x32, user photo from Clerk)
+
+HERO — idle state (before run starts)
+  [ASSET]     Optional hero background image
+  [BUILT-IN]  H1 "StartupForge" (text)
+  [BUILT-IN]  Subtitle text
+  [BUILT-IN]  Idea textarea with placeholder example text
+  [BUILT-IN]  "Run agent" primary button (white)
+
+WORKFLOW — after run starts
+  [BUILT-IN]  "Your idea" label + quoted idea text
+  [BUILT-IN]  StageProgress — 4 steps with circles:
+                1. Competitor Research
+                2. Landing Page
+                3. Launch Posts
+                4. AI Agent Prompts
+              Uses checkmark, pulsing dot, step numbers (no images)
+
+STATES during workflow
+  Queued:
+    [ASSET]   Optional queue illustration
+    [BUILT-IN] Animated CSS rings + queue number (#N)
+    [BUILT-IN] "Launch queue" / "You're in the waiting line" copy
+    [BUILT-IN] Amber "keep tab open" prompt
+
+  Running:
+    [ASSET]   Optional loading mascot/spinner
+    [BUILT-IN] CSS ring spinner + shimmer status text
+    [BUILT-IN] "StartupForge is thinking" label
+    [BUILT-IN] Amber "keep tab open" prompt
+
+  Awaiting approval:
+    [BUILT-IN] Output panel for current step
+    [BUILT-IN] "Proceed to ..." white CTA button
+
+  Complete:
+    [BUILT-IN] Final output panel
+    [BUILT-IN] Emerald "View full results" button
+
+OUTPUT PANELS (components/OutputPanel.tsx)
+  [BUILT-IN]  Markdown research display
+  [BUILT-IN]  Landing page iframe preview
+  [BUILT-IN]  Device toggle icons — mobile, tablet, desktop (inline SVG)
+  [BUILT-IN]  Expand / Open / Download .zip / Copy buttons
+  [BUILT-IN]  AI prompts markdown with code blocks
+
+POST CARDS (components/PostCards.tsx)
+  [ASSET]     Optional platform logos and product avatar (see Priority 3)
+  [BUILT-IN]  Twitter/X thread mock card
+  [BUILT-IN]  Hacker News "Show HN" mock card
+  [BUILT-IN]  Reddit post mock card
+  [BUILT-IN]  Copy button on each card
+
+ERROR STATE
+  [BUILT-IN]  Red bordered alert text (no illustration)
+
+--------------------------------------------------------------------------------
+/history  (app/history/page.tsx + RunHistoryList.tsx)
+--------------------------------------------------------------------------------
+
+  [BUILT-IN]  Page title "History" + subtitle
+  [BUILT-IN]  "New run" white button
+  [BUILT-IN]  Run cards: idea text, status badge, date, View/Resume/Delete links
+  [ASSET]     Empty state illustration when no runs exist
+  [BUILT-IN]  Empty state fallback: "No runs yet." + "Start your first run" button
+
+Status badge colors (text only, no icons):
+  complete = emerald, running = sky, error = red
+
+--------------------------------------------------------------------------------
+/results/[id]  (app/results/[id]/page.tsx)
+--------------------------------------------------------------------------------
+
+  [BUILT-IN]  Back to History link
+  [BUILT-IN]  "Results" heading + quoted idea + status
+  [BUILT-IN]  Tab bar: Research | Landing | Posts | AI Prompts
+  [BUILT-IN]  Same OutputPanel and PostCards as dashboard
+  [BUILT-IN]  ProgressTracker when run still running (unicode status symbols)
+  [BUILT-IN]  "Resume run" sky button
+
+--------------------------------------------------------------------------------
+/sign-in  and  /sign-up
+--------------------------------------------------------------------------------
+
+  [ASSET]     App logo above Clerk form (not present today — good placement)
+  [BUILT-IN]  Clerk SignIn / SignUp components (dark theme styled)
+  [BUILT-IN]  OAuth provider icons (loaded by Clerk CDN — do NOT provide)
+
+--------------------------------------------------------------------------------
+INLINE SVGs ALREADY IN CODE (do NOT need files unless you want to replace them)
+--------------------------------------------------------------------------------
+
+  OutputPanel.tsx   — mobile, tablet, desktop preview device icons
+  PostCards.tsx     — Twitter verified badge (blue checkmark SVG)
+
+--------------------------------------------------------------------------------
+API / NON-PAGE UI (informational)
+--------------------------------------------------------------------------------
+
+  /api/preview/[id]  — serves AI-generated landing HTML (may contain its own
+                         images inside the HTML; not part of app chrome)
+  /api/waitlist      — plain HTML thank-you page, text only, no images
+
+================================================================================
+7. WHAT YOU DO NOT NEED TO PROVIDE
+================================================================================
+
+  - User profile photos          Clerk UserButton handles this
+  - Google/GitHub OAuth icons    Loaded by Clerk CDN automatically
+  - Competitor research images   Agent outputs markdown text only
+  - Markdown inline images       Only if agent outputs URLs in research text
+  - Device preview icons         Already inline SVG in OutputPanel.tsx
+  - Stage progress icons         CSS circles, checkmarks, numbers
+  - Progress tracker symbols     Unicode: checkmark, filled circle, empty circle
+  - Database / Supabase images   Schema has no image columns or storage buckets
+  - Font files                   App uses system/default font stack
+
+================================================================================
+8. OPTIONAL: LANDING-PAGE TEMPLATE ASSETS (separate from dashboard UI)
+================================================================================
+
+The AI agent generates a unique HTML landing page per run (lib/hermes.ts).
+Generated pages include: hero, 3 features, social proof placeholder, waitlist
+form. These are NOT stored as app assets — they are inline HTML/CSS per run.
+
+If you want CONSISTENT imagery across all AI-generated landing pages (future
+integration, not wired up today), provide a separate bucket:
+
+Asset                          Specs
+-----                          -----
+Hero background or screenshot  1200x800, works on dark theme
+Feature icons (x3)             64x64 SVG, monochrome, dark-bg friendly
+Social proof avatars (x3)      48x48 circular headshots or placeholders
+Logo for embedded HTML         SVG or PNG, light version for dark pages
+
+Suggested filenames:
+  landing-hero-bg.png
+  landing-feature-1.svg
+  landing-feature-2.svg
+  landing-feature-3.svg
+  landing-avatar-1.png
+  landing-avatar-2.png
+  landing-avatar-3.png
+  landing-logo.svg
+
+Note: Using these would require a future code change to the Hermes prompt.
+Out of scope for the current asset delivery pass.
+
+================================================================================
+9. RECOMMENDED FOLDER STRUCTURE WHEN YOU DELIVER FILES
+================================================================================
+
+Place files in a folder you can share (e.g. zip or Google Drive). Suggested
+layout for when they are later added to the project:
+
+  assets/
+    branding/
+      logo.svg
+      logo-icon.svg
+      favicon.ico
+      icon-512.png
+      apple-touch-icon.png
+      og-image.png
+    ui/
+      empty-state.svg
+      loading-spinner.svg
+      queue-icon.svg
+      hero-bg.png
+    social-mocks/          (optional)
+      twitter-logo.svg
+      product-avatar.png
+      hn-logo.svg
+      reddit-upvote.svg
+      reddit-downvote.svg
+    landing-templates/     (optional, for AI-generated pages)
+      landing-hero-bg.png
+      landing-feature-1.svg
+      ...
+
+The project currently has NO public/ folder. When integrating later, branding
+files typically go in public/ (e.g. public/logo.svg, public/favicon.ico).
+
+================================================================================
+10. DELIVERY CHECKLIST — COPY AND CHECK OFF AS YOU PROVIDE FILES
+================================================================================
+
+PRIORITY 1 — REQUIRED
+[ ] logo.svg
+[ ] logo-icon.svg
+[ ] favicon.ico
+[ ] icon-512.png
+[ ] apple-touch-icon.png
+[ ] og-image.png (1200x630)
+
+PRIORITY 2 — RECOMMENDED
+[ ] empty-state.svg (or .png ~400x300)
+[ ] loading-spinner.svg (40x40 to 80x80)
+[ ] queue-icon.svg (optional, ~80x80)
+[ ] hero-bg.png (optional, 1920x1080, very subtle)
+
+PRIORITY 3 — OPTIONAL SOCIAL MOCKS
+[ ] twitter-logo.svg (32x32)
+[ ] product-avatar.png (40x40)
+[ ] hn-logo.svg (28x28)
+[ ] reddit-upvote.svg (16x16)
+[ ] reddit-downvote.svg (16x16)
+[ ] reddit-comment.svg (16x16)
+[ ] reddit-share.svg (16x16)
+[ ] reddit-award.svg (16x16)
+
+OPTIONAL LANDING-PAGE TEMPLATES (separate bucket)
+[ ] landing-hero-bg.png (1200x800)
+[ ] landing-feature-1.svg (64x64)
+[ ] landing-feature-2.svg (64x64)
+[ ] landing-feature-3.svg (64x64)
+[ ] landing-avatar-1.png (48x48)
+[ ] landing-avatar-2.png (48x48)
+[ ] landing-avatar-3.png (48x48)
+[ ] landing-logo.svg
+
+DECISIONS BEFORE FINAL ARTWORK
+[ ] Confirm brand name: StartupForge vs Agent Autopilot vs both
+[ ] Confirm logo style: wordmark, icon+wordmark, or icon-only for navbar
+
+================================================================================
+END OF CHECKLIST
+================================================================================

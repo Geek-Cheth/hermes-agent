@@ -294,9 +294,9 @@ export function OutputPanel({
           className={
             language === 'markdown'
               ? 'p-4 sm:p-6'
-              : `p-4 max-h-[700px] overflow-y-auto scrollbar-dark ${
-                  showPreviewTools && device !== 'desktop' ? 'overflow-x-hidden' : ''
-                }`
+              : showPreviewTools
+                ? `p-4 overflow-hidden${device !== 'desktop' ? ' overflow-x-hidden' : ''}`
+                : 'p-4 max-h-[700px] overflow-y-auto scrollbar-dark'
           }
         >
           {previewContent}
@@ -347,7 +347,7 @@ export function OutputPanel({
             </div>
 
             <div
-              className={`flex-1 min-h-0 p-4 sm:p-6 overflow-y-auto scrollbar-dark ${
+              className={`flex-1 min-h-0 p-4 sm:p-6 overflow-hidden ${
                 device !== 'desktop' ? 'overflow-x-hidden' : ''
               }`}
             >
