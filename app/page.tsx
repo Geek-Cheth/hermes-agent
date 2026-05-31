@@ -1,506 +1,248 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { AnimatePresence, motion } from 'framer-motion';
-import { IdeaForm } from '@/components/IdeaForm';
-import { Navbar } from '@/components/Navbar';
-import { OutputPanel } from '@/components/OutputPanel';
-import { PostCards } from '@/components/PostCards';
-import { StageProgress } from '@/components/StageProgress';
-import { ThinkingLoader } from '@/components/ThinkingLoader';
-import { WaitingList } from '@/components/WaitingList';
-import { nextStatusMessage } from '@/lib/status-messages';
-import { getResumeState, taskOutputsFromRun } from '@/lib/resume';
-import {
-  DEFAULT_TASKS,
-  Phase,
-  PROCEED_LABELS,
-  Run,
-  SseEvent,
-  TASK_LABELS,
-  TASK_NAMES,
-  TASK_TO_FIELD,
-  TaskName,
-  TasksMap,
-} from '@/lib/types';
+import { useEffect, useState } from 'react';
 
-export default function Dashboard() {
-  const router = useRouter();
-  const [idea, setIdea] = useState('');
-  const [runId, setRunId] = useState<string | null>(null);
-  const [phase, setPhase] = useState<Phase>('idle');
-  const [currentStep, setCurrentStep] = useState(0);
-  const [viewStep, setViewStep] = useState(0);
-  const [tasks, setTasks] = useState<TasksMap>(DEFAULT_TASKS);
-  const [streamText, setStreamText] = useState('');
-  const [streamLogs, setStreamLogs] = useState<string[]>([]);
-  const [currentStatus, setCurrentStatus] = useState('');
-  const [queuePosition, setQueuePosition] = useState(0);
-  const [taskOutputs, setTaskOutputs] = useState<Partial<Record<TaskName, string>>>({});
-  const [error, setError] = useState<string | null>(null);
-  const [resuming, setResuming] = useState(false);
-  const eventSourceRef = useRef<EventSource | null>(null);
-  const phaseRef = useRef<Phase>(phase);
-  const streamClosedOkRef = useRef(false);
-  const resumeHandledRef = useRef(false);
-  phaseRef.current = phase;
+const ROTATING_WORDS = [
+  'competitor research',
+  'a landing page',
+  'launch posts',
+  'AI agent prompts',
+];
 
-  const activeTask =
-    phase === 'running' || phase === 'queued' ? TASK_NAMES[currentStep] : null;
-  const currentTaskName = TASK_NAMES[currentStep];
-  const viewTaskName = TASK_NAMES[viewStep];
-  const isViewingPastStep = viewStep < currentStep;
-  const isViewingCurrent =
-    viewStep === currentStep &&
-    (phase === 'running' || phase === 'queued' || phase === 'awaiting');
-  const showWorkflow = runId && phase !== 'idle';
+const FEATURES = [
+  {
+    title: 'Competitor Research',
+    desc: 'Live web search across your market. Rivals, gaps, positioning angles.',
+  },
+  {
+    title: 'Landing Page',
+    desc: 'Full HTML page, previewed live. Waitlist form included, ready to ship.',
+  },
+  {
+    title: 'Launch Posts',
+    desc: 'Product Hunt, X, LinkedIn, HN — each tuned to the platform.',
+  },
+  {
+    title: 'AI Agent Prompts',
+    desc: 'System prompts for support bots, sales assistants, onboarding flows.',
+  },
+];
 
-  const closeStream = useCallback(() => {
-    eventSourceRef.current?.close();
-    eventSourceRef.current = null;
-  }, []);
-
-  useEffect(() => () => closeStream(), [closeStream]);
-
-  const runTask = useCallback(
-    (task: TaskName, id: string, ideaText: string) => {
-      closeStream();
-      setStreamText('');
-      setStreamLogs([]);
-      setCurrentStatus(nextStatusMessage(task, 0));
-      setQueuePosition(0);
-      streamClosedOkRef.current = false;
-      setPhase('running');
-      setError(null);
-      setTasks((prev) => ({ ...prev, [task]: 'active' }));
-
-      const es = new EventSource(
-        `/api/run-task?task=${task}&runId=${id}&idea=${encodeURIComponent(ideaText)}`
-      );
-      eventSourceRef.current = es;
-
-      es.onmessage = (e) => {
-        try {
-          const data = JSON.parse(e.data) as SseEvent;
-
-          if (data.type === 'queued' && data.position) {
-            setPhase('queued');
-            setQueuePosition(data.position);
-            return;
-          }
-
-          if (
-            data.type === 'status' &&
-            data.message &&
-            data.message !== 'awaiting_approval'
-          ) {
-            setPhase('running');
-            setCurrentStatus(data.message);
-            if (data.log) {
-              setStreamLogs((prev) => [...prev, data.message!]);
-            }
-          }
-
-          if (data.type === 'delta' && data.content) {
-            setPhase('running');
-            setStreamText((prev) => prev + data.content);
-          }
-
-          if (data.type === 'output' && data.field && data.message) {
-            const taskKey = Object.entries(TASK_TO_FIELD).find(
-              ([, f]) => f === data.field
-            )?.[0] as TaskName | undefined;
-            if (taskKey) {
-              setTaskOutputs((prev) => ({ ...prev, [taskKey]: data.message }));
-            }
-          }
-
-          if (data.type === 'task_done' && data.task) {
-            setTasks((prev) => ({ ...prev, [data.task as TaskName]: 'done' }));
-          }
-
-          if (data.type === 'status' && data.message === 'awaiting_approval') {
-            streamClosedOkRef.current = true;
-            setPhase('awaiting');
-            closeStream();
-          }
-
-          if (data.type === 'complete') {
-            streamClosedOkRef.current = true;
-            setPhase('complete');
-            closeStream();
-          }
-
-          if (data.type === 'error') {
-            setError(data.message ?? 'Something went wrong');
-            setPhase('idle');
-            closeStream();
-          }
-        } catch {
-          // ignore malformed
-        }
-      };
-
-      es.onerror = () => {
-        if (streamClosedOkRef.current) {
-          closeStream();
-          return;
-        }
-        if (phaseRef.current === 'running' || phaseRef.current === 'queued') {
-          setError(
-            'Connection lost while streaming. Check History or try again.'
-          );
-          setPhase('idle');
-        }
-        closeStream();
-      };
-    },
-    [closeStream]
-  );
+function RotatingText() {
+  const [index, setIndex] = useState(0);
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    if (resumeHandledRef.current) return;
-
-    const params = new URLSearchParams(window.location.search);
-    const resumeId = params.get('resume');
-    if (!resumeId) return;
-
-    resumeHandledRef.current = true;
-    setResuming(true);
-
-    (async () => {
-      try {
-        const res = await fetch(`/api/runs/${resumeId}`);
-        if (!res.ok) {
-          const data = await res.json().catch(() => ({}));
-          throw new Error(data.error ?? 'Failed to load run');
-        }
-
-        const run = (await res.json()) as Run;
-        const resume = getResumeState(run);
-
-        if (resume.action === 'redirect_results') {
-          router.replace(`/results/${resumeId}`);
-          return;
-        }
-
-        setIdea(run.idea);
-        setRunId(run.id);
-        setTasks(run.tasks);
-        setTaskOutputs(taskOutputsFromRun(run));
-        setStreamText('');
-        setCurrentStatus('');
-        setCurrentStep(resume.currentStep);
-        setViewStep(resume.viewStep);
-        setPhase(resume.phase);
-        setError(null);
-
-        window.history.replaceState({}, '', '/');
-
-        if (resume.action === 'run') {
-          runTask(TASK_NAMES[resume.currentStep], run.id, run.idea);
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to resume run');
-        setPhase('idle');
-      } finally {
-        setResuming(false);
-      }
-    })();
-  }, [router, runTask]);
-
-  function handleStart() {
-    if (!idea.trim()) return;
-
-    const id = crypto.randomUUID();
-    setRunId(id);
-    setCurrentStep(0);
-    setViewStep(0);
-    setTasks(DEFAULT_TASKS);
-    setTaskOutputs({});
-    setStreamText('');
-    setStreamLogs([]);
-    setCurrentStatus('');
-    setQueuePosition(0);
-    setPhase('running');
-    runTask(TASK_NAMES[0], id, idea.trim());
-  }
-
-  function handleProceed() {
-    if (!runId) return;
-
-    const isLast = currentStep >= TASK_NAMES.length - 1;
-    if (isLast) {
-      setPhase('complete');
-      return;
-    }
-
-    const nextStep = currentStep + 1;
-    setCurrentStep(nextStep);
-    setViewStep(nextStep);
-    runTask(TASK_NAMES[nextStep], runId, idea.trim());
-  }
-
-  function renderStageOutput(task: TaskName) {
-    const output = taskOutputs[task];
-
-    if (!output && task === TASK_NAMES[currentStep] && phase === 'awaiting') {
-      return (
-        <div className="mt-4 prose-invert-dark rounded-xl border border-[#262626] bg-[#111111] p-4">
-          <p className="text-sm text-[#71717a]">
-            {streamText.trim()
-              ? 'Output saved. Review below or proceed.'
-              : 'Output saved. Proceed to continue.'}
-          </p>
-          {streamText.trim() && (
-            <pre className="mt-3 text-sm text-zinc-400 whitespace-pre-wrap font-mono max-h-48 overflow-y-auto scrollbar-dark">
-              {streamText.slice(0, 2000)}
-              {streamText.length > 2000 ? '…' : ''}
-            </pre>
-          )}
-        </div>
-      );
-    }
-
-    if (!output) return null;
-
-    if (task === 'landing_page' && runId) {
-      return (
-        <OutputPanel
-          title="Landing Page Preview"
-          content={output}
-          language="preview"
-          previewUrl={`/api/preview/${runId}`}
-        />
-      );
-    }
-
-    if (task === 'launch_posts') {
-      return <PostCards postsMd={output} />;
-    }
-
-    if (task === 'agent_prompts') {
-      return (
-        <OutputPanel
-          title="AI Agent Prompts"
-          content={output}
-          language="markdown"
-        />
-      );
-    }
-
-    return (
-      <OutputPanel
-        title={TASK_LABELS[task]}
-        content={output}
-        language="markdown"
-      />
-    );
-  }
-
-  function renderFocusedContent() {
-    const task = viewTaskName;
-
-    if (isViewingPastStep) {
-      return (
-        <motion.div
-          key={`past-${viewStep}`}
-          initial={{ opacity: 0, x: -12 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 12 }}
-          className="space-y-4"
-        >
-          {(phase === 'running' || phase === 'queued') &&
-            viewStep < currentStep && (
-            <p className="text-xs text-sky-400/90 flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-sky-400 animate-pulse" />
-              {TASK_LABELS[TASK_NAMES[currentStep]]} is still running…
-            </p>
-          )}
-          {renderStageOutput(task)}
-          <button
-            type="button"
-            onClick={() => setViewStep(currentStep)}
-            className="text-sm text-[#71717a] hover:text-[#fafafa] transition-colors"
-          >
-            Return to current step →
-          </button>
-        </motion.div>
-      );
-    }
-
-    if (phase === 'queued' && viewStep === currentStep) {
-      return (
-        <motion.div
-          key={`queued-${currentStep}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          <WaitingList
-            position={queuePosition}
-            label={TASK_LABELS[currentTaskName]}
-          />
-        </motion.div>
-      );
-    }
-
-    if (phase === 'running' && viewStep === currentStep) {
-      return (
-        <motion.div
-          key={`running-${currentStep}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          <ThinkingLoader
-            message={currentStatus}
-            label={TASK_LABELS[currentTaskName]}
-            logs={streamLogs}
-          />
-        </motion.div>
-      );
-    }
-
-    if (phase === 'awaiting' && viewStep === currentStep) {
-      return (
-        <motion.div
-          key={`awaiting-${viewStep}`}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          className="space-y-6"
-        >
-          {renderStageOutput(task)}
-          <motion.button
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.99 }}
-            onClick={handleProceed}
-            className="w-full bg-white text-black py-3 rounded-xl text-lg font-medium hover:bg-zinc-200 transition-colors"
-          >
-            {PROCEED_LABELS[currentTaskName]}
-          </motion.button>
-        </motion.div>
-      );
-    }
-
-    if (phase === 'complete') {
-      return (
-        <motion.div
-          key="complete"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="space-y-6"
-        >
-          {renderStageOutput(TASK_NAMES[TASK_NAMES.length - 1])}
-          {runId && (
-            <Link
-              href={`/results/${runId}`}
-              className="block text-center w-full bg-emerald-500 text-black py-3 rounded-xl text-lg font-medium hover:bg-emerald-400 transition-colors"
-            >
-              View full results →
-            </Link>
-          )}
-        </motion.div>
-      );
-    }
-
-    return null;
-  }
+    const interval = setInterval(() => {
+      setVisible(false);
+      setTimeout(() => {
+        setIndex((i) => (i + 1) % ROTATING_WORDS.length);
+        setVisible(true);
+      }, 300);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <>
-      <Navbar />
-      <main className="max-w-3xl mx-auto px-6 py-10">
-        <AnimatePresence mode="wait">
-          {!showWorkflow && !resuming ? (
-            <motion.div
-              key="hero"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0, y: -8 }}
-            >
-              <h1 className="text-3xl font-bold mb-2 tracking-tight">
-                StartupForge
-              </h1>
-              <p className="text-[#71717a] mb-8">
-                Describe your idea. Review each step before proceeding.
-              </p>
-            </motion.div>
-          ) : resuming ? (
-            <motion.div
-              key="resuming"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="mb-6"
-            >
-              <p className="text-[#71717a]">Restoring your run…</p>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="workflow-header"
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-6"
-            >
-              <p className="text-xs uppercase tracking-widest text-[#52525b] mb-1">
-                Your idea
-              </p>
-              <p className="text-[#fafafa] font-medium line-clamp-2 italic">
-                &ldquo;{idea}&rdquo;
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
+    <span
+      className="text-[#3b5bdb] inline-block"
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(8px)',
+        transition: 'opacity 0.3s ease, transform 0.3s ease',
+      }}
+    >
+      {ROTATING_WORDS[index]}
+    </span>
+  );
+}
 
-        <AnimatePresence mode="wait">
-          {!showWorkflow && !resuming ? (
-            <IdeaForm
-              key="form"
-              idea={idea}
-              onIdeaChange={setIdea}
-              onRun={handleStart}
-              isRunning={phase === 'running' || phase === 'queued'}
-              disabled={
-                phase === 'running' ||
-                phase === 'queued' ||
-                phase === 'awaiting'
-              }
-            />
-          ) : null}
-        </AnimatePresence>
+export default function LandingPage() {
+  return (
+    <div className="min-h-screen bg-white text-black font-sans">
 
-        {error && (
-          <p className="mt-4 text-red-400 text-sm bg-red-950/30 border border-red-900/50 rounded-lg p-3">
-            {error}
+      {/* Nav */}
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-black/[0.06]">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-full bg-black flex items-center justify-center">
+              <svg viewBox="0 0 14 14" fill="none" className="w-3.5 h-3.5">
+                <path d="M3 10.5L7 3.5L11 10.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <span className="text-sm font-semibold tracking-tight">StartupForge</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/sign-in"
+              className="text-sm text-[#565656] hover:text-black transition-colors px-3 py-1.5"
+            >
+              Login
+            </Link>
+            <Link
+              href="/sign-up"
+              className="text-sm bg-black text-white px-5 py-2 rounded-full font-semibold hover:bg-zinc-800 transition-colors border border-black"
+            >
+              Get started
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero */}
+      <section className="pt-20 pb-8 px-6 text-center">
+        <div className="max-w-4xl mx-auto">
+          <h1
+            className="font-bold text-black text-center mb-6"
+            style={{
+              fontSize: 'clamp(40px, 6vw, 60px)',
+              lineHeight: '1.1',
+              letterSpacing: '-1px',
+            }}
+          >
+            The AI launch kit for
+            <br />
+            <RotatingText />
+          </h1>
+
+          <p
+            className="text-[#565656] text-center max-w-xl mx-auto mb-8"
+            style={{ fontSize: '20px', fontWeight: 500, letterSpacing: '0.1px', lineHeight: '28px' }}
+          >
+            Describe your startup idea. StartupForge runs four AI tasks —
+            all streaming live, one approval at a time.
           </p>
-        )}
 
-        <AnimatePresence>
-          {showWorkflow && (
-            <motion.div
-              key="progress"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="mt-8 space-y-8"
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
+            <Link
+              href="/sign-up"
+              className="w-full sm:w-auto bg-black text-white px-8 py-3 rounded-full text-sm font-semibold hover:bg-zinc-800 transition-colors border border-black"
             >
-              <StageProgress
-                tasks={tasks}
-                currentStep={currentStep}
-                viewStep={viewStep}
-                onViewStepChange={setViewStep}
-              />
+              Get started
+            </Link>
+            <Link
+              href="/sign-in"
+              className="w-full sm:w-auto bg-white text-black px-8 py-3 rounded-full text-sm font-semibold hover:bg-zinc-50 transition-colors border border-black"
+            >
+              Sign in
+            </Link>
+          </div>
+        </div>
+      </section>
 
-              <AnimatePresence mode="wait">
-                {renderFocusedContent()}
-              </AnimatePresence>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </main>
-    </>
+      {/* Product visual */}
+      <section className="px-6 pb-20">
+        <div className="max-w-4xl mx-auto">
+          <div className="rounded-2xl overflow-hidden border border-black/10 bg-[#f4f5fb] p-8">
+            <div className="bg-white rounded-xl border border-black/[0.08] p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-2 h-2 rounded-full bg-zinc-200" />
+                <div className="w-2 h-2 rounded-full bg-zinc-200" />
+                <div className="w-2 h-2 rounded-full bg-zinc-200" />
+              </div>
+              <div className="space-y-3">
+                {['Competitor Research', 'Landing Page', 'Launch Posts', 'AI Agent Prompts'].map((step, i) => (
+                  <div key={step} className="flex items-center gap-3">
+                    <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${i === 1 ? 'bg-[#3b5bdb] text-white' : i < 1 ? 'bg-black text-white' : 'bg-zinc-100 text-zinc-400'}`}>
+                      {i < 1 ? '✓' : i + 1}
+                    </div>
+                    <div className={`flex-1 h-2 rounded-full ${i < 1 ? 'bg-black' : i === 1 ? 'bg-[#3b5bdb]/20' : 'bg-zinc-100'}`} style={{ width: i === 1 ? '60%' : '100%' }} />
+                    <span className={`text-xs font-medium ${i === 1 ? 'text-[#3b5bdb]' : i < 1 ? 'text-black' : 'text-zinc-300'}`}>
+                      {i === 1 ? 'running…' : i < 1 ? 'done' : ''}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="border-t border-black/[0.06] py-24 px-6">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-xs uppercase tracking-widest text-[#a0a0a0] mb-4 text-center">What it builds</p>
+          <h2
+            className="font-bold text-black text-center mb-14"
+            style={{ fontSize: 'clamp(28px, 4vw, 40px)', letterSpacing: '-0.5px', lineHeight: '1.2' }}
+          >
+            Four outputs. Zero busywork.
+          </h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {FEATURES.map((f, i) => (
+              <div key={f.title} className="border border-black/[0.08] rounded-2xl p-6 hover:border-black/20 transition-colors">
+                <div className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center mb-4">
+                  <span className="text-xs font-bold text-black/40">0{i + 1}</span>
+                </div>
+                <h3 className="font-semibold text-black text-sm mb-2">{f.title}</h3>
+                <p className="text-[#565656] text-xs leading-relaxed">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="border-t border-black/[0.06] py-24 px-6 bg-[#f8f9ff]">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-xs uppercase tracking-widest text-[#a0a0a0] mb-4 text-center">How it works</p>
+          <h2
+            className="font-bold text-black text-center mb-14"
+            style={{ fontSize: 'clamp(28px, 4vw, 40px)', letterSpacing: '-0.5px', lineHeight: '1.2' }}
+          >
+            Submit once. Review at each step.
+          </h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { n: '01', t: 'Describe your idea', d: 'One sentence. No deck needed.' },
+              { n: '02', t: 'Watch it stream', d: 'Every line generated live — no black box.' },
+              { n: '03', t: 'Approve & continue', d: 'Review output before the next task starts.' },
+              { n: '04', t: 'Export everything', d: 'Download the page, copy posts, use prompts.' },
+            ].map((h) => (
+              <div key={h.n}>
+                <span className="text-xs font-mono text-[#a0a0a0] mb-3 block">{h.n}</span>
+                <h3 className="font-semibold text-black text-sm mb-2">{h.t}</h3>
+                <p className="text-[#565656] text-xs leading-relaxed">{h.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="border-t border-black/[0.06] py-28 px-6 text-center">
+        <div className="max-w-xl mx-auto">
+          <h2
+            className="font-bold text-black mb-4"
+            style={{ fontSize: 'clamp(28px, 4vw, 44px)', letterSpacing: '-0.5px', lineHeight: '1.15' }}
+          >
+            Your idea deserves a launch kit.
+          </h2>
+          <p className="text-[#565656] mb-8 text-lg">No credit card. Takes 2 minutes.</p>
+          <Link
+            href="/sign-up"
+            className="inline-block bg-black text-white px-10 py-3.5 rounded-full text-sm font-semibold hover:bg-zinc-800 transition-colors border border-black"
+          >
+            Get started free
+          </Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-black/[0.06] py-8 px-6">
+        <div className="max-w-6xl mx-auto flex items-center justify-between text-xs text-[#a0a0a0]">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded-full bg-black flex items-center justify-center">
+              <svg viewBox="0 0 10 10" fill="none" className="w-2.5 h-2.5">
+                <path d="M2 7.5L5 2.5L8 7.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <span>StartupForge</span>
+          </div>
+          <span>Built with Hermes Agent</span>
+        </div>
+      </footer>
+    </div>
   );
 }

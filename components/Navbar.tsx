@@ -7,7 +7,7 @@ export function Navbar() {
   return (
     <header className="border-b border-[#262626] bg-[#0a0a0a]/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-lg font-semibold tracking-tight text-[#fafafa]">
+        <Link href="/dashboard" className="text-lg font-semibold tracking-tight text-[#fafafa]">
           StartupForge
         </Link>
         <nav className="flex items-center gap-6">
