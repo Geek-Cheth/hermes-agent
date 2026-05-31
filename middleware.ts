@@ -14,7 +14,9 @@ export default clerkMiddleware((auth, req) => {
 
   // Logged-in users hitting landing page → redirect to dashboard
   if (userId && req.nextUrl.pathname === '/') {
-    return NextResponse.redirect(new URL('/dashboard', req.url));
+    const url = req.nextUrl.clone();
+    url.pathname = '/dashboard';
+    return NextResponse.redirect(url);
   }
 
   if (!isPublicRoute(req)) {

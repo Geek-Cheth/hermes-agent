@@ -48,7 +48,9 @@ Open [http://localhost:3000](http://localhost:3000).
 | `SUPABASE_SERVICE_KEY` | Supabase service role key |
 | `TELEGRAM_BOT_TOKEN` | Optional fallback Telegram bot |
 | `TELEGRAM_CHAT_ID` | Optional fallback chat ID |
-| `MONTHLY_RUN_LIMIT` | Monthly run cap per user (default `10`) |
+| `DAILY_RUN_LIMIT` | Daily run cap per user (default `1`) |
+| `ENFORCE_DAILY_LIMIT` | Set `true` to enforce the daily cap |
+| `MONTHLY_RUN_LIMIT` | Monthly run cap per user (default `5`) |
 | `ENFORCE_MONTHLY_LIMIT` | Set `true` to enforce the monthly cap |
 | `STREAM_DEBUG` | Set `1` to log Hermes SSE payloads in the server terminal |
 

@@ -109,7 +109,7 @@ export function RunHistoryList({ initialRuns }: RunHistoryListProps) {
             <div className="flex items-center gap-3 shrink-0 pt-0.5">
               {run.status === 'running' && (
                 <Link
-                  href={`/?resume=${run.id}`}
+                  href={`/dashboard?resume=${run.id}`}
                   className="text-xs text-sky-400 hover:text-sky-300 font-medium transition-colors"
                 >
                   Resume

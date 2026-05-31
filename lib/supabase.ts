@@ -202,6 +202,23 @@ export async function countRunsThisMonth(userId: string): Promise<number> {
   return count ?? 0;
 }
 
+export async function countRunsToday(userId: string): Promise<number> {
+  const now = new Date();
+  const startOfDay = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+  ).toISOString();
+
+  const client = getSupabase();
+  const { count, error } = await client
+    .from('runs')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .gte('created_at', startOfDay);
+
+  if (error) throw new Error(`countRunsToday failed: ${error.message}`);
+  return count ?? 0;
+}
+
 export async function deleteRunForUser(
   id: string,
   userId: string

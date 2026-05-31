@@ -98,7 +98,9 @@ SUPABASE_URL
 SUPABASE_SERVICE_KEY
 TELEGRAM_BOT_TOKEN           # optional
 TELEGRAM_CHAT_ID             # optional
-MONTHLY_RUN_LIMIT            # default 10
+DAILY_RUN_LIMIT              # default 1
+ENFORCE_DAILY_LIMIT          # set "true" to enforce
+MONTHLY_RUN_LIMIT            # default 5
 ENFORCE_MONTHLY_LIMIT        # set "true" to enforce
 STREAM_DEBUG                 # set "1" to log raw SSE payloads
 ```

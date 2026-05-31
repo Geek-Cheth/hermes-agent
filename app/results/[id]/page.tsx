@@ -109,7 +109,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
             <p className="text-amber-400 text-sm">Agent still running...</p>
             <ProgressTracker tasks={run.tasks} />
             <Link
-              href={`/?resume=${params.id}`}
+              href={`/dashboard?resume=${params.id}`}
               className="inline-block bg-sky-500 text-black px-5 py-2.5 rounded-full text-sm font-semibold tracking-[-0.04px] hover:bg-sky-400 transition-colors"
             >
               Resume run →

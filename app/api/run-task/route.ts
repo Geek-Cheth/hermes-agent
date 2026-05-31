@@ -1,7 +1,12 @@
 import { auth } from '@clerk/nextjs/server';
 import { buildPromptForTask, runTask } from '@/lib/hermes';
 import { acquireSlot, QueueAbortedError } from '@/lib/job-queue';
-import { ENFORCE_MONTHLY_LIMIT, MONTHLY_RUN_LIMIT } from '@/lib/limits';
+import {
+  DAILY_RUN_LIMIT,
+  ENFORCE_DAILY_LIMIT,
+  ENFORCE_MONTHLY_LIMIT,
+  MONTHLY_RUN_LIMIT,
+} from '@/lib/limits';
 import { normalizeMarkdown } from '@/lib/normalize-markdown';
 import { parseHermesStream, StreamParser } from '@/lib/parse-stream';
 import { formatSseEvent } from '@/lib/sse';
@@ -9,6 +14,7 @@ import { nextStatusMessage } from '@/lib/status-messages';
 import {
   completeRun,
   countRunsThisMonth,
+  countRunsToday,
   createRun,
   failRun,
   getRun,
@@ -102,12 +108,24 @@ export async function GET(request: Request) {
             return;
           }
 
+          // Limits apply only when creating a new run; existing runs (Proceed / resume) skip this block.
+          if (ENFORCE_DAILY_LIMIT) {
+            const dailyCount = await countRunsToday(userId);
+            if (dailyCount >= DAILY_RUN_LIMIT) {
+              send({
+                type: 'error',
+                message: `Daily limit reached (${DAILY_RUN_LIMIT} per day). Try again tomorrow.`,
+              });
+              return;
+            }
+          }
+
           if (ENFORCE_MONTHLY_LIMIT) {
             const monthlyCount = await countRunsThisMonth(userId);
             if (monthlyCount >= MONTHLY_RUN_LIMIT) {
               send({
                 type: 'error',
-                message: `Monthly run limit reached (${MONTHLY_RUN_LIMIT}). Try again next month.`,
+                message: `Monthly limit reached (${MONTHLY_RUN_LIMIT} this month). Try again next month.`,
               });
               return;
             }
