@@ -42,7 +42,7 @@ export function StageProgress({
                   className="absolute top-5 left-1/2 z-0 h-0.5 w-full -translate-y-1/2 pointer-events-none"
                   aria-hidden
                 >
-                  <div className="h-full bg-[#262626]" />
+                  <div className="h-full bg-white/[0.06]" />
                   {isDone && (
                     <motion.div
                       className="absolute inset-0 bg-[#fafafa] origin-left"

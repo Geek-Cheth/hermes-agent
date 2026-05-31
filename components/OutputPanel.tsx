@@ -79,7 +79,7 @@ function DeviceToggle({
   onChange: (device: DeviceSize) => void;
 }) {
   return (
-    <div className="flex rounded-lg border border-[#262626] overflow-hidden">
+    <div className="flex rounded-full border border-white/[0.06] overflow-hidden">
       {(Object.keys(DEVICE_CONFIG) as DeviceSize[]).map((key) => (
         <button
           key={key}
@@ -88,7 +88,7 @@ function DeviceToggle({
           title={DEVICE_CONFIG[key].ariaLabel}
           aria-label={DEVICE_CONFIG[key].ariaLabel}
           aria-pressed={device === key}
-          className={`px-2.5 py-1.5 transition-colors ${
+          className={`px-2.5 py-1.5 transition-colors first:rounded-l-full last:rounded-r-full ${
             device === key
               ? 'bg-[#fafafa] text-black'
               : 'text-[#71717a] hover:text-[#fafafa] hover:bg-[#1a1a1a]'
@@ -138,7 +138,7 @@ function PreviewFrame({
       >
         <motion.div
           layout
-          className={`rounded-lg border border-[#262626] bg-white shadow-2xl shadow-black/50 ${
+          className={`rounded-2xl border border-white/[0.06] bg-white shadow-2xl shadow-black/50 ${
             device !== 'desktop' ? 'overflow-x-hidden max-w-full' : ''
           } ${expanded ? 'h-full flex flex-col' : ''}`}
           style={{
@@ -150,7 +150,7 @@ function PreviewFrame({
             title={title}
             src={previewUrl}
             srcDoc={srcDoc}
-            sandbox="allow-forms allow-same-origin allow-popups"
+            sandbox="allow-forms allow-popups"
             className="w-full bg-white block"
             style={{
               height: iframeHeight,
@@ -244,8 +244,8 @@ export function OutputPanel({
 
   return (
     <>
-      <section className="bg-[#111111] border border-[#262626] rounded-xl overflow-hidden">
-        <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-[#262626]">
+      <section className="bg-[#111111] border border-white/[0.07] rounded-2xl overflow-hidden">
+        <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-white/[0.06]">
           <h2 className="font-semibold text-[#fafafa]">{title}</h2>
           <div className="flex flex-wrap items-center gap-2">
             {showPreviewTools && (
@@ -254,14 +254,14 @@ export function OutputPanel({
                 <button
                   type="button"
                   onClick={() => setExpanded(true)}
-                  className="text-sm text-[#71717a] hover:text-[#fafafa] px-3 py-1.5 rounded-lg border border-[#262626] transition-colors"
+                  className="text-sm text-[#71717a] hover:text-[#fafafa] px-3 py-1.5 rounded-full border border-white/[0.06] transition-colors"
                 >
                   Expand
                 </button>
                 <button
                   type="button"
                   onClick={handleOpenPreview}
-                  className="text-sm text-[#71717a] hover:text-[#fafafa] px-3 py-1.5 rounded-lg border border-[#262626] transition-colors"
+                  className="text-sm text-[#71717a] hover:text-[#fafafa] px-3 py-1.5 rounded-full border border-white/[0.06] transition-colors"
                 >
                   Open
                 </button>
@@ -269,7 +269,7 @@ export function OutputPanel({
                   type="button"
                   onClick={handleDownloadZip}
                   disabled={downloading || !content.trim()}
-                  className="text-sm text-[#71717a] hover:text-[#fafafa] px-3 py-1.5 rounded-lg border border-[#262626] disabled:opacity-40"
+                  className="text-sm text-[#71717a] hover:text-[#fafafa] px-3 py-1.5 rounded-full border border-white/[0.06] transition-colors disabled:opacity-40"
                 >
                   {downloading ? 'Zipping…' : 'Download .zip'}
                 </button>
@@ -277,7 +277,7 @@ export function OutputPanel({
             )}
             <button
               onClick={handleCopy}
-              className="text-sm text-[#71717a] hover:text-[#fafafa] px-3 py-1 rounded-lg border border-[#262626]"
+              className="text-sm text-[#71717a] hover:text-[#fafafa] px-3 py-1 rounded-full border border-white/[0.06] transition-colors"
             >
               {copied ? 'Copied!' : 'Copy'}
             </button>
@@ -295,7 +295,7 @@ export function OutputPanel({
         >
           {previewContent}
           {language === 'code' && (
-            <pre className="text-sm bg-[#0d0d0d] text-zinc-300 p-4 rounded-lg overflow-x-auto border border-[#1f1f1f] scrollbar-dark">
+            <pre className="text-sm bg-[#0d0d0d] text-zinc-300 p-4 rounded-2xl overflow-x-auto border border-white/[0.06] scrollbar-dark">
               <code>{content}</code>
             </pre>
           )}
@@ -314,7 +314,7 @@ export function OutputPanel({
             aria-modal="true"
             aria-label={`${title} fullscreen preview`}
           >
-            <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-4 border-b border-[#262626] shrink-0">
+            <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-4 border-b border-white/[0.06] shrink-0">
               <div>
                 <h2 className="font-semibold text-[#fafafa]">{title}</h2>
                 <p className="text-xs text-[#52525b] mt-0.5">
@@ -326,14 +326,14 @@ export function OutputPanel({
                 <button
                   type="button"
                   onClick={handleOpenPreview}
-                  className="text-sm text-[#71717a] hover:text-[#fafafa] px-3 py-1.5 rounded-lg border border-[#262626] transition-colors"
+                  className="text-sm text-[#71717a] hover:text-[#fafafa] px-3 py-1.5 rounded-full border border-white/[0.06] transition-colors"
                 >
                   Open
                 </button>
                 <button
                   type="button"
                   onClick={() => setExpanded(false)}
-                  className="text-sm text-[#fafafa] bg-[#262626] hover:bg-[#404040] px-3 py-1.5 rounded-lg transition-colors"
+                  className="text-sm text-[#fafafa] bg-white/[0.07] hover:bg-white/[0.12] px-3 py-1.5 rounded-full transition-colors"
                 >
                   Close
                 </button>

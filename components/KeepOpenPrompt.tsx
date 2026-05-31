@@ -16,14 +16,14 @@ export function KeepOpenPrompt({ variant = 'running' }: KeepOpenPromptProps) {
     <motion.div
       initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex items-start gap-3 rounded-xl border border-amber-900/40 bg-amber-950/20 px-4 py-3"
+      className="flex items-start gap-3 border-l-2 border-white/[0.12] pl-3 py-0.5"
     >
       <motion.span
-        className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-amber-400"
-        animate={{ opacity: [0.4, 1, 0.4] }}
-        transition={{ duration: 1.5, repeat: Infinity }}
+        className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400/70"
+        animate={{ opacity: [0.3, 0.9, 0.3] }}
+        transition={{ duration: 2, repeat: Infinity }}
       />
-      <p className="text-sm text-amber-200/90 leading-relaxed">{message}</p>
+      <p className="text-xs text-[#71717a] leading-relaxed">{message}</p>
     </motion.div>
   );
 }

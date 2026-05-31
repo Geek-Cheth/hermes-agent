@@ -85,7 +85,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
           ← History
         </Link>
 
-        <h1 className="text-3xl font-bold mb-2">Results</h1>
+        <h1 className="text-[40px] font-bold leading-[48px] tracking-[-0.5px] mb-2">Results</h1>
         <p className="text-[#71717a] mb-2 italic line-clamp-2">&ldquo;{run.idea}&rdquo;</p>
         <p className="text-sm text-[#71717a] mb-6">
           <span
@@ -110,20 +110,20 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
             <ProgressTracker tasks={run.tasks} />
             <Link
               href={`/?resume=${params.id}`}
-              className="inline-block bg-sky-500 text-black px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-sky-400 transition-colors"
+              className="inline-block bg-sky-500 text-black px-5 py-2.5 rounded-full text-sm font-semibold tracking-[-0.04px] hover:bg-sky-400 transition-colors"
             >
               Resume run →
             </Link>
           </div>
         )}
 
-        <div className="flex gap-2 mb-6 flex-wrap border-b border-[#262626] pb-2">
+        <div className="flex gap-2 mb-6 flex-wrap border-b border-white/[0.06] pb-2">
           {tabs.map((t) => (
             <button
               key={t.id}
               onClick={() => t.available && setTab(t.id)}
               disabled={!t.available}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 tab === t.id
                   ? 'bg-[#fafafa] text-black'
                   : t.available

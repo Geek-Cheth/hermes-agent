@@ -22,7 +22,7 @@ export function StreamingText({ text, logs, isStreaming }: StreamingTextProps) {
   return (
     <div
       ref={ref}
-      className="font-mono text-sm bg-[#0d0d0d] border border-[#1f1f1f] rounded-xl p-4 h-64 overflow-y-auto scrollbar-dark"
+      className="font-mono text-sm bg-[#0d0d0d] border border-white/[0.06] rounded-2xl p-4 h-64 overflow-y-auto scrollbar-dark"
     >
       {logs.map((line, i) => (
         <div key={i} className="text-[#71717a] mb-1">
