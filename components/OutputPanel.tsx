@@ -237,14 +237,7 @@ export function OutputPanel({
   }
 
   const previewContent =
-    language === 'preview' && previewUrl ? (
-      <PreviewFrame
-        title={title}
-        device={device}
-        expanded={false}
-        previewUrl={previewUrl}
-      />
-    ) : language === 'html' ? (
+    (language === 'preview' || language === 'html') && content.trim() ? (
       <PreviewFrame title={title} device={device} expanded={false} srcDoc={content} />
     ) : null;
 
@@ -355,8 +348,7 @@ export function OutputPanel({
                 title={title}
                 device={device}
                 expanded
-                previewUrl={language === 'preview' ? previewUrl : undefined}
-                srcDoc={language === 'html' ? content : undefined}
+                srcDoc={content}
               />
             </div>
           </motion.div>

@@ -59,37 +59,37 @@ function TwitterCard({ content }: { content: string }) {
         </div>
         <CopyButton text={content} />
       </div>
-      <div className="p-4 space-y-0">
-        {tweets.map((tweet, i) => (
-          <div key={i} className="flex gap-3">
-            <div className="flex flex-col items-center">
-              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-zinc-600 to-zinc-800 shrink-0" />
-              {i < tweets.length - 1 && (
-                <div className="w-0.5 flex-1 min-h-[24px] bg-[#262626] my-1" />
-              )}
+      <div className="p-4">
+        <div className="flex gap-3">
+          <div className="flex flex-col items-center shrink-0">
+            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-zinc-600 to-zinc-800" />
+            {tweets.length > 1 && (
+              <div className="w-0.5 flex-1 min-h-[24px] bg-[#262626] my-1" />
+            )}
+          </div>
+          <div className="flex-1 min-w-0 pb-4">
+            <div className="flex items-center gap-1 mb-3">
+              <span className="font-bold text-[#fafafa] text-sm">Your Product</span>
+              <span className="text-[#71717a] text-sm">@yourproduct</span>
+              <svg className="h-4 w-4 text-sky-400" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.954-.84 1.602-2.038 1.602-3.6 0-2.21-1.79-4-4-4-1.58 0-2.95.875-3.6 2.148-.84-.954-2.038-1.602-3.6-1.602-2.21 0-4 1.79-4 4 0 1.58.875 2.95 2.148 3.6-.954.84-1.602 2.038-1.602 3.6 0 2.21 1.79 4 4 4 1.58 0 2.95-.875 3.6-2.148.84.954 2.038 1.602 3.6 1.602 2.21 0 4-1.79 4-4z" />
+              </svg>
             </div>
-            <div className="flex-1 pb-4">
-              <div className="flex items-center gap-1 mb-1">
-                <span className="font-bold text-[#fafafa] text-sm">Your Product</span>
-                <span className="text-[#71717a] text-sm">@yourproduct</span>
-                <svg className="h-4 w-4 text-sky-400" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.954-.84 1.602-2.038 1.602-3.6 0-2.21-1.79-4-4-4-1.58 0-2.95.875-3.6 2.148-.84-.954-2.038-1.602-3.6-1.602-2.21 0-4 1.79-4 4 0 1.58.875 2.95 2.148 3.6-.954.84-1.602 2.038-1.602 3.6 0 2.21 1.79 4 4 4 1.58 0 2.95-.875 3.6-2.148.84.954 2.038 1.602 3.6 1.602 2.21 0 4-1.79 4-4z" />
-                </svg>
-              </div>
-              <div className="prose-invert-dark text-sm">
-                <ReactMarkdown>{tweet}</ReactMarkdown>
-              </div>
-              {i === tweets.length - 1 && (
-                <div className="flex gap-6 mt-3 text-[#52525b] text-xs">
-                  <span>↩ 12</span>
-                  <span>🔁 8</span>
-                  <span>♡ 124</span>
-                  <span>⬚ 2.1K</span>
+            <div className="space-y-4">
+              {tweets.map((tweet, i) => (
+                <div key={i} className="prose-invert-dark text-sm">
+                  <ReactMarkdown>{tweet}</ReactMarkdown>
                 </div>
-              )}
+              ))}
+            </div>
+            <div className="flex gap-6 mt-3 text-[#52525b] text-xs">
+              <span>↩ 12</span>
+              <span>🔁 8</span>
+              <span>♡ 124</span>
+              <span>⬚ 2.1K</span>
             </div>
           </div>
-        ))}
+        </div>
       </div>
     </motion.section>
   );
