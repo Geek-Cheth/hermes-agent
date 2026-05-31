@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { IdeaForm } from '@/components/IdeaForm';
+import { Logo } from '@/components/Logo';
 import { Navbar } from '@/components/Navbar';
 import { OutputPanel } from '@/components/OutputPanel';
 import { PostCards } from '@/components/PostCards';
@@ -460,9 +461,12 @@ export default function Dashboard() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, y: -8 }}
             >
-              <h1 className="text-[40px] font-bold leading-[48px] tracking-[-0.5px] mb-2">
-                StartupForge
-              </h1>
+              <div className="flex items-center gap-3 mb-2">
+                <Logo markSize={40} />
+                <h1 className="text-[40px] font-bold leading-[48px] tracking-[-0.5px]">
+                  StartupForge
+                </h1>
+              </div>
               <p className="text-[#71717a] mb-8">
                 Describe your idea. Review each step before proceeding.
               </p>
