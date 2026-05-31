@@ -1,4 +1,4 @@
-# Security Audit — Hermes Agent Autopilot
+# Security Audit — StartupForge
 
 3 confirmed vulnerabilities (Finding 4 — Telegram injection — filtered as false positive: Telegram HTML parse mode has no script execution, impact is cosmetic formatting in operator's private chat only).
 

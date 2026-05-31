@@ -1,6 +1,6 @@
 /**
  * In-process concurrency gate for Hermes task execution.
- * Correct for single-container deployment (npm start / one autopilot-app).
+ * Correct for single-container deployment (npm start / one startupforge-app).
  * For horizontal scaling, replace with a shared store (Redis / Supabase counter).
  */
 

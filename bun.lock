@@ -3,7 +3,7 @@
   "configVersion": 0,
   "workspaces": {
     "": {
-      "name": "hermes-agent",
+      "name": "startupforge",
       "dependencies": {
         "@clerk/nextjs": "^5.7.6",
         "@supabase/supabase-js": "^2.49.1",

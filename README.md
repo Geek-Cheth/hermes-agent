@@ -1,6 +1,8 @@
-# Agent Autopilot
+# StartupForge
 
-Hermes-powered dashboard: describe a product idea in plain text, and the agent autonomously researches competitors, writes a landing page, drafts launch posts, and generates waitlist backend code.
+Describe your idea. The agent does the rest.
+
+Hermes-powered launch kit: describe a product idea in plain text, and the agent autonomously researches competitors, writes a landing page, drafts launch posts, and generates AI agent prompts.
 
 ## Stack
 
@@ -68,7 +70,7 @@ Open [http://localhost:3000](http://localhost:3000).
 2. Add this app to your existing `docker-compose.yml` or use the provided one. Export required variables in your shell or place them in a root `.env` file (gitignored) for Compose — including Clerk keys, Supabase credentials, `HERMES_API_KEY`, and `APP_URL` / `NEXT_PUBLIC_APP_URL`:
 
 ```bash
-docker compose up -d --build autopilot-app
+docker compose up -d --build startupforge-app
 ```
 
 3. Point your Coolify reverse proxy at `127.0.0.1:3000`.
@@ -78,7 +80,7 @@ docker compose up -d --build autopilot-app
 ## Project structure
 
 ```
-hermes-agent/
+startupforge/
 ├── app/
 │   ├── page.tsx                 # Dashboard
 │   ├── results/[id]/page.tsx    # Output viewer

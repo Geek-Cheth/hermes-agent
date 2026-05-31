@@ -1,4 +1,4 @@
--- Agent Autopilot schema
+-- StartupForge schema
 -- Run this in your Supabase SQL editor
 
 create table if not exists runs (

@@ -1,5 +1,5 @@
 ================================================================================
-STARTUPFORGE (hermes-agent) — SITE ELEMENTS & IMAGES ASSET CHECKLIST
+STARTUPFORGE — SITE ELEMENTS & IMAGES ASSET CHECKLIST
 ================================================================================
 
 Generated for asset sourcing. Provide the files listed below; no code changes
@@ -10,8 +10,7 @@ delivery checklist when preparing images.
 1. APP OVERVIEW
 ================================================================================
 
-Product (UI name):     StartupForge
-Repo/README name:      Agent Autopilot  <-- naming split; confirm before logo work
+Product name:          StartupForge
 Tagline:               "Describe your idea. The agent does the rest."
 Secondary tagline:     "Describe your idea. Review each step before proceeding."
 Loading copy:          "StartupForge is thinking"
@@ -65,11 +64,6 @@ FORMAT PREFERENCES
   - Use transparent backgrounds where logo sits on #0a0a0a or #111111
   - Design for dark UI: light-on-dark treatment; avoid dark logos on dark bg
 
-BRANDING DECISION NEEDED
-------------------------
-  UI displays "StartupForge" everywhere (navbar, hero, metadata, loader).
-  README and Docker use "Agent Autopilot".
-  Decide which name appears in logo/wordmark before final artwork.
 
 ================================================================================
 3. PRIORITY 1 — MUST PROVIDE (branding & SEO)
@@ -417,7 +411,6 @@ OPTIONAL LANDING-PAGE TEMPLATES (separate bucket)
 [ ] landing-logo.svg
 
 DECISIONS BEFORE FINAL ARTWORK
-[ ] Confirm brand name: StartupForge vs Agent Autopilot vs both
 [ ] Confirm logo style: wordmark, icon+wordmark, or icon-only for navbar
 
 ================================================================================

@@ -1,4 +1,4 @@
-# Hermes Agent Autopilot — CLAUDE.md
+# StartupForge — CLAUDE.md
 
 ## What this is
 
