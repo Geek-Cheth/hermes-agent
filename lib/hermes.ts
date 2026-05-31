@@ -1,3 +1,4 @@
+import { resolveTemplate } from './landing-templates';
 import { TaskName } from './types';
 
 export const SENTINELS = {
@@ -51,9 +52,17 @@ Then output exactly: TASK_DONE: competitor_research
 export function buildLandingPrompt(
   idea: string,
   runId: string,
-  competitorsMd: string
+  competitorsMd: string,
+  templateId?: string,
+  styleNotes?: string
 ): string {
   const url = appUrl();
+  const template = resolveTemplate(templateId);
+  const trimmedNotes = styleNotes?.trim();
+  const styleNotesBlock = trimmedNotes
+    ? `\nUser color/style preferences (honor these above template defaults): "${trimmedNotes}"\n`
+    : '';
+
   return `
 You are an indie hacker launch agent. Complete ONLY the landing page task.
 
@@ -65,7 +74,8 @@ ${competitorsMd}
 
 ${PROGRESS_RULES}
 
-Write a complete, beautiful single-file HTML landing page (dark theme, modern matte design).
+Write a complete, beautiful single-file HTML landing page using the "${template.name}" template style: ${template.styleBrief}.
+${styleNotesBlock}
 Include: hero, 3 features, social proof placeholder, waitlist form.
 Requirements:
 - Include <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -215,13 +225,23 @@ export function buildPromptForTask(
   task: TaskName,
   idea: string,
   runId: string,
-  context: { competitorsMd?: string }
+  context: {
+    competitorsMd?: string;
+    landingTemplateId?: string;
+    landingStyleNotes?: string;
+  }
 ): string {
   switch (task) {
     case 'competitor_research':
       return buildCompetitorPrompt(idea);
     case 'landing_page':
-      return buildLandingPrompt(idea, runId, context.competitorsMd ?? '');
+      return buildLandingPrompt(
+        idea,
+        runId,
+        context.competitorsMd ?? '',
+        context.landingTemplateId,
+        context.landingStyleNotes
+      );
     case 'launch_posts':
       return buildPostsPrompt(idea, context.competitorsMd ?? '');
     case 'agent_prompts':

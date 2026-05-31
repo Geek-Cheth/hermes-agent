@@ -20,6 +20,8 @@ export interface Run {
   landing_html: string | null;
   posts_md: string | null;
   agent_prompts_md: string | null;
+  landing_template: string | null;
+  landing_style_notes: string | null;
   error_message: string | null;
   created_at: string;
   completed_at: string | null;

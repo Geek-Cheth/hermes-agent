@@ -11,6 +11,8 @@ import { PostCards } from '@/components/PostCards';
 import { StageProgress } from '@/components/StageProgress';
 import { ThinkingLoader } from '@/components/ThinkingLoader';
 import { WaitingList } from '@/components/WaitingList';
+import { TemplatePicker } from '@/components/TemplatePicker';
+import { DEFAULT_TEMPLATE_ID } from '@/lib/landing-templates';
 import { nextStatusMessage } from '@/lib/status-messages';
 import { getResumeState, taskOutputsFromRun } from '@/lib/resume';
 import {
@@ -41,6 +43,8 @@ export default function Dashboard() {
   const [taskOutputs, setTaskOutputs] = useState<Partial<Record<TaskName, string>>>({});
   const [error, setError] = useState<string | null>(null);
   const [resuming, setResuming] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState(DEFAULT_TEMPLATE_ID);
+  const [styleNotes, setStyleNotes] = useState('');
   const eventSourceRef = useRef<EventSource | null>(null);
   const phaseRef = useRef<Phase>(phase);
   const streamClosedOkRef = useRef(false);
@@ -65,7 +69,12 @@ export default function Dashboard() {
   useEffect(() => () => closeStream(), [closeStream]);
 
   const runTask = useCallback(
-    (task: TaskName, id: string, ideaText: string) => {
+    (
+      task: TaskName,
+      id: string,
+      ideaText: string,
+      landingOpts?: { template: string; styleNotes: string }
+    ) => {
       closeStream();
       setStreamText('');
       setStreamLogs([]);
@@ -76,9 +85,15 @@ export default function Dashboard() {
       setError(null);
       setTasks((prev) => ({ ...prev, [task]: 'active' }));
 
-      const es = new EventSource(
-        `/api/run-task?task=${task}&runId=${id}&idea=${encodeURIComponent(ideaText)}`
-      );
+      let url = `/api/run-task?task=${task}&runId=${id}&idea=${encodeURIComponent(ideaText)}`;
+      if (task === 'landing_page' && landingOpts) {
+        url += `&template=${encodeURIComponent(landingOpts.template)}`;
+        if (landingOpts.styleNotes.trim()) {
+          url += `&styleNotes=${encodeURIComponent(landingOpts.styleNotes.trim())}`;
+        }
+      }
+
+      const es = new EventSource(url);
       eventSourceRef.current = es;
 
       es.onmessage = (e) => {
@@ -190,6 +205,8 @@ export default function Dashboard() {
         setRunId(run.id);
         setTasks(run.tasks);
         setTaskOutputs(taskOutputsFromRun(run));
+        setSelectedTemplate(run.landing_template ?? DEFAULT_TEMPLATE_ID);
+        setStyleNotes(run.landing_style_notes ?? '');
         setStreamText('');
         setCurrentStatus('');
         setCurrentStep(resume.currentStep);
@@ -222,6 +239,8 @@ export default function Dashboard() {
     setTaskOutputs({});
     setStreamText('');
     setStreamLogs([]);
+    setSelectedTemplate(DEFAULT_TEMPLATE_ID);
+    setStyleNotes('');
     setCurrentStatus('');
     setQueuePosition(0);
     setPhase('running');
@@ -240,7 +259,16 @@ export default function Dashboard() {
     const nextStep = currentStep + 1;
     setCurrentStep(nextStep);
     setViewStep(nextStep);
-    runTask(TASK_NAMES[nextStep], runId, idea.trim());
+
+    const nextTask = TASK_NAMES[nextStep];
+    if (currentTaskName === 'competitor_research' && nextTask === 'landing_page') {
+      runTask(nextTask, runId, idea.trim(), {
+        template: selectedTemplate,
+        styleNotes,
+      });
+    } else {
+      runTask(nextTask, runId, idea.trim());
+    }
   }
 
   function renderStageOutput(task: TaskName) {
@@ -374,6 +402,16 @@ export default function Dashboard() {
           className="space-y-6"
         >
           {renderStageOutput(task)}
+          {phase === 'awaiting' &&
+            viewStep === currentStep &&
+            currentTaskName === 'competitor_research' && (
+              <TemplatePicker
+                selected={selectedTemplate}
+                onSelect={setSelectedTemplate}
+                notes={styleNotes}
+                onNotesChange={setStyleNotes}
+              />
+            )}
           <motion.button
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}

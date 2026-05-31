@@ -14,6 +14,7 @@ import {
   getRun,
   getRunForUser,
   saveRunOutput,
+  saveRunTemplate,
   updateRunTask,
 } from '@/lib/supabase';
 import {
@@ -137,8 +138,28 @@ export async function GET(request: Request) {
         sendStatus(send, `Starting ${task.replace(/_/g, ' ')}…`, task);
         sendStatus(send, 'Connecting…', task);
 
+        let landingTemplateId = run.landing_template ?? undefined;
+        let landingStyleNotes = run.landing_style_notes ?? undefined;
+
+        if (task === 'landing_page') {
+          const templateParam = searchParams.get('template');
+          const styleNotesParam = searchParams.get('styleNotes');
+
+          if (templateParam) {
+            landingTemplateId = templateParam;
+            landingStyleNotes = styleNotesParam?.trim() || undefined;
+            run = await saveRunTemplate(
+              runId,
+              templateParam,
+              styleNotesParam?.trim() || null
+            );
+          }
+        }
+
         const context = {
           competitorsMd: run.competitors_md ?? undefined,
+          landingTemplateId,
+          landingStyleNotes,
         };
 
         const prompt = buildPromptForTask(task, idea.trim(), runId, context);

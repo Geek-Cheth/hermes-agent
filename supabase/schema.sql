@@ -16,6 +16,8 @@ create table if not exists runs (
   landing_html text,
   posts_md text,
   agent_prompts_md text,
+  landing_template text,
+  landing_style_notes text,
   error_message text,
   created_at timestamptz not null default now(),
   completed_at timestamptz
@@ -28,6 +30,8 @@ create index if not exists runs_user_id_idx on runs (user_id, created_at desc);
 -- alter table runs add column if not exists user_id text;
 -- create index if not exists runs_user_id_idx on runs (user_id, created_at desc);
 -- alter table runs add column if not exists agent_prompts_md text;
+-- alter table runs add column if not exists landing_template text;
+-- alter table runs add column if not exists landing_style_notes text;
 
 create table if not exists waitlist (
   id uuid primary key default gen_random_uuid(),

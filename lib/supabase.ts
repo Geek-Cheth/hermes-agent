@@ -115,6 +115,26 @@ export async function updateRunTask(
   return data as Run;
 }
 
+export async function saveRunTemplate(
+  id: string,
+  template: string,
+  styleNotes: string | null
+): Promise<Run> {
+  const client = getSupabase();
+  const { data, error } = await client
+    .from('runs')
+    .update({
+      landing_template: template,
+      landing_style_notes: styleNotes?.trim() || null,
+    })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw new Error(`saveRunTemplate failed: ${error.message}`);
+  return data as Run;
+}
+
 export async function saveRunOutput(
   id: string,
   field: OutputField,
