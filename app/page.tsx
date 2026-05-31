@@ -35,6 +35,7 @@ export default function Dashboard() {
   const [viewStep, setViewStep] = useState(0);
   const [tasks, setTasks] = useState<TasksMap>(DEFAULT_TASKS);
   const [streamText, setStreamText] = useState('');
+  const [streamLogs, setStreamLogs] = useState<string[]>([]);
   const [currentStatus, setCurrentStatus] = useState('');
   const [queuePosition, setQueuePosition] = useState(0);
   const [taskOutputs, setTaskOutputs] = useState<Partial<Record<TaskName, string>>>({});
@@ -67,6 +68,7 @@ export default function Dashboard() {
     (task: TaskName, id: string, ideaText: string) => {
       closeStream();
       setStreamText('');
+      setStreamLogs([]);
       setCurrentStatus(nextStatusMessage(task, 0));
       setQueuePosition(0);
       streamClosedOkRef.current = false;
@@ -96,6 +98,9 @@ export default function Dashboard() {
           ) {
             setPhase('running');
             setCurrentStatus(data.message);
+            if (data.log) {
+              setStreamLogs((prev) => [...prev, data.message!]);
+            }
           }
 
           if (data.type === 'delta' && data.content) {
@@ -216,6 +221,7 @@ export default function Dashboard() {
     setTasks(DEFAULT_TASKS);
     setTaskOutputs({});
     setStreamText('');
+    setStreamLogs([]);
     setCurrentStatus('');
     setQueuePosition(0);
     setPhase('running');
@@ -352,6 +358,7 @@ export default function Dashboard() {
           <ThinkingLoader
             message={currentStatus}
             label={TASK_LABELS[currentTaskName]}
+            logs={streamLogs}
           />
         </motion.div>
       );

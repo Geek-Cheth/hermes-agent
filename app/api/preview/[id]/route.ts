@@ -17,6 +17,8 @@ export async function GET(
     headers: {
       'Content-Type': 'text/html; charset=utf-8',
       'Cache-Control': 'no-store',
+      'Content-Security-Policy': "default-src 'self' 'unsafe-inline'; script-src 'none'; object-src 'none'; frame-ancestors 'none';",
+      'X-Frame-Options': 'DENY',
     },
   });
 }

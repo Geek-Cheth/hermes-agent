@@ -1,4 +1,5 @@
-import { getRun } from '@/lib/supabase';
+import { auth } from '@clerk/nextjs/server';
+import { getRunForUser } from '@/lib/supabase';
 import { formatSseEvent } from '@/lib/sse';
 import { SseEvent, TaskName } from '@/lib/types';
 
@@ -9,6 +10,11 @@ export async function GET(
   _request: Request,
   { params }: { params: { id: string } }
 ) {
+  const { userId } = await auth();
+  if (!userId) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
   const runId = params.id;
   const encoder = new TextEncoder();
 
@@ -19,7 +25,7 @@ export async function GET(
       };
 
       try {
-        const run = await getRun(runId);
+        const run = await getRunForUser(runId, userId);
         if (!run) {
           send({ type: 'error', message: 'Run not found' });
           controller.close();
@@ -55,7 +61,7 @@ export async function GET(
 
         if (run.status === 'running') {
           const poll = setInterval(async () => {
-            const updated = await getRun(runId);
+            const updated = await getRunForUser(runId, userId);
             if (!updated) {
               clearInterval(poll);
               return;

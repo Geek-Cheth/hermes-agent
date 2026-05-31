@@ -150,6 +150,7 @@ function PreviewFrame({
             title={title}
             src={previewUrl}
             srcDoc={srcDoc}
+            sandbox="allow-forms allow-same-origin allow-popups"
             className="w-full bg-white block"
             style={{
               height: iframeHeight,

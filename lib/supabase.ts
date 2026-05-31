@@ -72,7 +72,7 @@ export async function getRunForUser(
 ): Promise<Run | null> {
   const run = await getRun(id);
   if (!run) return null;
-  if (run.user_id && run.user_id !== userId) return null;
+  if (run.user_id !== userId) return null;
   return run;
 }
 
