@@ -1,15 +1,24 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { KeepOpenPrompt } from '@/components/KeepOpenPrompt';
 
 interface ThinkingLoaderProps {
   message: string;
   label: string;
+  logs?: string[];
 }
 
-export function ThinkingLoader({ message, label }: ThinkingLoaderProps) {
+export function ThinkingLoader({ message, label, logs = [] }: ThinkingLoaderProps) {
   const displayMessage = message.trim() || 'Working on it…';
+  const logsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (logsRef.current) {
+      logsRef.current.scrollTop = logsRef.current.scrollHeight;
+    }
+  }, [logs]);
 
   return (
     <div className="space-y-4">
@@ -50,6 +59,26 @@ export function ThinkingLoader({ message, label }: ThinkingLoaderProps) {
             </motion.p>
           </AnimatePresence>
         </div>
+
+        {logs.length > 0 && (
+          <div
+            ref={logsRef}
+            className="mt-5 max-h-40 overflow-y-auto space-y-1 scrollbar-dark"
+          >
+            {logs.map((line, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -6 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-start gap-2 font-mono text-xs text-[#52525b]"
+              >
+                <span className="mt-0.5 shrink-0 text-[#3f3f46]">›</span>
+                <span className={i === logs.length - 1 ? 'text-[#71717a]' : ''}>{line}</span>
+              </motion.div>
+            ))}
+          </div>
+        )}
 
         <div className="mt-6 flex gap-1.5">
           {[0, 1, 2].map((i) => (

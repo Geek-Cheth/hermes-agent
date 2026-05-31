@@ -150,12 +150,28 @@ export async function GET(request: Request) {
 
         sendStatus(send, nextStatusMessage(task, 0), task);
 
+        let progressLineBuffer = '';
+
         for await (const chunk of parseHermesStream(hermesResponse.body)) {
           accumulated += chunk.rawText;
 
           if (chunk.visibleText.trim().length > 0) {
             sawVisibleText = true;
             send({ type: 'delta', content: chunk.visibleText, task });
+
+            progressLineBuffer += chunk.visibleText;
+            const nlIdx = progressLineBuffer.lastIndexOf('\n');
+            if (nlIdx !== -1) {
+              const completeLines = progressLineBuffer.slice(0, nlIdx);
+              progressLineBuffer = progressLineBuffer.slice(nlIdx + 1);
+              for (const line of completeLines.split('\n')) {
+                const trimmed = line.trim();
+                if (trimmed.startsWith('PROGRESS:')) {
+                  const msg = trimmed.slice(9).trim();
+                  if (msg) send({ type: 'status', message: msg, task, log: true });
+                }
+              }
+            }
           }
 
           for (const event of chunk.events) {
