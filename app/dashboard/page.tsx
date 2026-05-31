@@ -248,7 +248,7 @@ export default function Dashboard() {
 
     if (!output && task === TASK_NAMES[currentStep] && phase === 'awaiting') {
       return (
-        <div className="mt-4 prose-invert-dark rounded-xl border border-[#262626] bg-[#111111] p-4">
+        <div className="mt-4 prose-invert-dark rounded-2xl border border-white/[0.07] bg-[#111111] p-4">
           <p className="text-sm text-[#71717a]">
             {streamText.trim()
               ? 'Output saved. Review below or proceed.'
@@ -378,7 +378,7 @@ export default function Dashboard() {
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
             onClick={handleProceed}
-            className="w-full bg-white text-black py-3 rounded-xl text-lg font-medium hover:bg-zinc-200 transition-colors"
+            className="w-full bg-white text-black py-3 rounded-full text-base font-semibold tracking-[-0.04px] hover:bg-zinc-200 transition-colors"
           >
             {PROCEED_LABELS[currentTaskName]}
           </motion.button>
@@ -398,7 +398,7 @@ export default function Dashboard() {
           {runId && (
             <Link
               href={`/results/${runId}`}
-              className="block text-center w-full bg-emerald-500 text-black py-3 rounded-xl text-lg font-medium hover:bg-emerald-400 transition-colors"
+              className="block text-center w-full bg-emerald-500 text-black py-3 rounded-full text-base font-semibold tracking-[-0.04px] hover:bg-emerald-400 transition-colors"
             >
               View full results →
             </Link>
@@ -422,7 +422,7 @@ export default function Dashboard() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, y: -8 }}
             >
-              <h1 className="text-3xl font-bold mb-2 tracking-tight">
+              <h1 className="text-[40px] font-bold leading-[48px] tracking-[-0.5px] mb-2">
                 StartupForge
               </h1>
               <p className="text-[#71717a] mb-8">

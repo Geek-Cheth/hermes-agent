@@ -4,19 +4,29 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Run } from '@/lib/types';
 
-function StatusBadge({ status }: { status: Run['status'] }) {
-  const styles = {
-    complete: 'bg-emerald-950 text-emerald-400 border-emerald-800',
-    running: 'bg-sky-950 text-sky-400 border-sky-800',
-    error: 'bg-red-950 text-red-400 border-red-800',
-  };
-  return (
-    <span
-      className={`text-xs font-medium px-2 py-0.5 rounded-full border capitalize ${styles[status]}`}
-    >
-      {status}
-    </span>
-  );
+const STATUS_DOT: Record<Run['status'], string> = {
+  complete: 'bg-emerald-400',
+  running: 'bg-sky-400 animate-pulse',
+  error: 'bg-red-400',
+};
+
+const STATUS_LABEL: Record<Run['status'], string> = {
+  complete: 'Complete',
+  running: 'Running',
+  error: 'Error',
+};
+
+const CARD_ACCENT: Record<Run['status'], string> = {
+  complete: 'border-l-emerald-500/40',
+  running: 'border-l-sky-500/40',
+  error: 'border-l-red-500/40',
+};
+
+function formatDate(iso: string) {
+  const d = new Date(iso);
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+    + ' · '
+    + d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
 }
 
 function truncate(text: string, max = 120) {
@@ -58,11 +68,11 @@ export function RunHistoryList({ initialRuns }: RunHistoryListProps) {
 
   if (runs.length === 0) {
     return (
-      <div className="text-center py-16 border border-[#262626] rounded-xl bg-[#111111]">
+      <div className="text-center py-16 border border-white/[0.07] rounded-2xl bg-[#111111]">
         <p className="text-[#71717a] mb-4">No runs yet.</p>
         <Link
           href="/"
-          className="inline-block bg-white text-black px-6 py-2 rounded-xl font-medium hover:bg-zinc-200"
+          className="inline-block bg-white text-black px-6 py-2 rounded-full text-sm font-semibold tracking-[-0.04px] hover:bg-zinc-200 transition-colors"
         >
           Start your first run
         </Link>
@@ -78,46 +88,47 @@ export function RunHistoryList({ initialRuns }: RunHistoryListProps) {
         </p>
       )}
 
-      <div className="grid gap-4">
+      <div className="divide-y divide-white/[0.04]">
         {runs.map((run) => (
           <article
             key={run.id}
-            className="bg-[#111111] border border-[#262626] rounded-xl p-5 hover:border-[#404040] transition-colors"
+            className={`group flex items-start gap-4 py-5 border-l-2 pl-4 transition-colors hover:border-l-white/30 ${CARD_ACCENT[run.status]}`}
           >
-            <div className="flex items-start justify-between gap-4 mb-3">
-              <p className="text-[#fafafa] font-medium flex-1">
+            <div className="flex-1 min-w-0">
+              <p className="text-[#fafafa] text-[15px] font-medium leading-snug mb-2">
                 {truncate(run.idea)}
               </p>
-              <StatusBadge status={run.status} />
-            </div>
-            <div className="flex items-center justify-between text-sm gap-4 flex-wrap">
-              <span className="text-[#71717a]">
-                {new Date(run.created_at).toLocaleString()}
-              </span>
-              <div className="flex items-center gap-4">
-                {run.status === 'running' && (
-                  <Link
-                    href={`/?resume=${run.id}`}
-                    className="text-sky-400 hover:text-sky-300 font-medium"
-                  >
-                    Resume →
-                  </Link>
-                )}
-                <Link
-                  href={`/results/${run.id}`}
-                  className="text-[#fafafa] hover:underline font-medium"
-                >
-                  View →
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(run)}
-                  disabled={deletingId === run.id}
-                  className="text-red-400/80 hover:text-red-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {deletingId === run.id ? 'Deleting…' : 'Delete'}
-                </button>
+              <div className="flex items-center gap-3 text-xs text-[#71717a]">
+                <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${STATUS_DOT[run.status]}`} />
+                <span>{STATUS_LABEL[run.status]}</span>
+                <span className="text-white/[0.08]">·</span>
+                <span>{formatDate(run.created_at)}</span>
               </div>
+            </div>
+
+            <div className="flex items-center gap-3 shrink-0 pt-0.5">
+              {run.status === 'running' && (
+                <Link
+                  href={`/?resume=${run.id}`}
+                  className="text-xs text-sky-400 hover:text-sky-300 font-medium transition-colors"
+                >
+                  Resume
+                </Link>
+              )}
+              <Link
+                href={`/results/${run.id}`}
+                className="text-xs text-[#71717a] hover:text-[#fafafa] px-3 py-1.5 rounded-full border border-white/[0.06] hover:border-white/20 transition-colors"
+              >
+                View
+              </Link>
+              <button
+                type="button"
+                onClick={() => handleDelete(run)}
+                disabled={deletingId === run.id}
+                className="text-xs text-[#52525b] hover:text-red-400 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {deletingId === run.id ? 'Deleting…' : 'Delete'}
+              </button>
             </div>
           </article>
         ))}

@@ -24,12 +24,12 @@ export default async function HistoryPage() {
       <main className="max-w-4xl mx-auto px-6 py-10">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold mb-1">History</h1>
+            <h1 className="text-[40px] font-bold leading-[48px] tracking-[-0.5px] mb-1">History</h1>
             <p className="text-[#71717a]">Your past agent runs</p>
           </div>
           <Link
             href="/"
-            className="bg-white text-black px-4 py-2 rounded-xl text-sm font-medium hover:bg-zinc-200 transition-colors"
+            className="bg-white text-black px-5 py-2 rounded-full text-sm font-semibold tracking-[-0.04px] hover:bg-zinc-200 transition-colors"
           >
             New run
           </Link>

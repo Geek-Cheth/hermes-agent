@@ -5,8 +5,8 @@ import { UserButton } from '@clerk/nextjs';
 
 export function Navbar() {
   return (
-    <header className="border-b border-[#262626] bg-[#0a0a0a]/80 backdrop-blur-sm sticky top-0 z-50">
-      <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+    <header className="border-b border-white/[0.06] bg-[#0a0a0a]/80 backdrop-blur-md sticky top-0 z-50 h-16">
+      <div className="max-w-5xl mx-auto px-6 h-full flex items-center justify-between">
         <Link href="/dashboard" className="text-lg font-semibold tracking-tight text-[#fafafa]">
           StartupForge
         </Link>

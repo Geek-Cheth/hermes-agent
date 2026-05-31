@@ -18,10 +18,10 @@ export function ProgressTracker({ tasks, activeTask }: ProgressTrackerProps) {
         return (
           <div
             key={task}
-            className={`flex items-center gap-3 p-4 rounded-xl border transition-colors ${
+            className={`flex items-center gap-3 p-4 rounded-2xl border transition-colors ${
               isActive
                 ? 'border-sky-500/50 bg-sky-950/20'
-                : 'border-[#262626] bg-[#111111]'
+                : 'border-white/[0.07] bg-[#111111]'
             }`}
           >
             <span

@@ -34,15 +34,15 @@ function CodeBlock({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="my-4 rounded-lg border border-[#262626] bg-[#0d0d0d] overflow-hidden">
-      <div className="flex items-center justify-between gap-3 px-3 py-2 border-b border-[#262626] bg-[#111111]">
+    <div className="my-4 rounded-2xl border border-white/[0.07] bg-[#0d0d0d] overflow-hidden">
+      <div className="flex items-center justify-between gap-3 px-3 py-2 border-b border-white/[0.06] bg-[#111111]">
         <span className="text-xs font-medium uppercase tracking-wide text-[#71717a]">
           {language ?? 'prompt'}
         </span>
         <button
           type="button"
           onClick={handleCopy}
-          className="text-xs text-[#71717a] hover:text-[#fafafa] px-2.5 py-1 rounded-md border border-[#262626] transition-colors"
+          className="text-xs text-[#71717a] hover:text-[#fafafa] px-2.5 py-1 rounded-full border border-white/[0.06] transition-colors"
         >
           {copied ? 'Copied!' : 'Copy'}
         </button>

@@ -22,7 +22,7 @@ export function ThinkingLoader({ message, label, logs = [] }: ThinkingLoaderProp
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl border border-[#262626] bg-[#111111]/80 backdrop-blur-sm p-8">
+      <div className="rounded-2xl border border-white/[0.07] bg-[#111111]/80 backdrop-blur-sm p-8">
         <div className="flex items-center gap-4 mb-6">
           <motion.div
             className="relative h-10 w-10 shrink-0"
